@@ -1,13 +1,35 @@
 import React, {useState} from 'react'
-import {Form, Button} from 'react-bootstrap'
+import {Form, Button, Alert} from 'react-bootstrap'
 
 function Login() {
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState(''); 
+  const [errorMsg, setErrorMsg] = useState(''); 
 
+  const handleLogin = (e)=>{
+    e.preventDefault(); 
+    const userEmail = "user@example.com"; 
+    const userpw = "password"; 
+    if(userEmail === email && userpw === password){
+        // login
+    }
+
+    setErrorMsg('Invalid Credentials')
+    
+  }
+
+  const AlertMsg = ({msg})=>(
+    <Alert variant="danger">
+  <p>
+{msg}
+  </p>
+
+</Alert>
+  )
     return (
-            <Form>
+            <Form onSubmit={handleLogin}>
   <Form.Group className="mb-3" controlId="formBasicEmail">
+    {errorMsg && <AlertMsg msg={errorMsg} />}
     <Form.Label>Email address</Form.Label>
     <Form.Control type="email" placeholder="Enter email" onChange={(e)=> setEmail(e.target.value)}/>
   
