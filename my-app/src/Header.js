@@ -1,5 +1,7 @@
 import React from 'react'
 import {Navbar, Container, Nav} from 'react-bootstrap'
+// link container makes sures the pages doesn't refresh after redirecting the route
+import {LinkContainer} from 'react-router-bootstrap'
 
 function Header({user, setUser}) {
     return (
@@ -11,13 +13,20 @@ function Header({user, setUser}) {
       <Nav className="me-auto">
         {/* if there is a user login show lookup page */}
         {!user ? 
-        <Nav.Link href="/login">Login</Nav.Link>
+        <LinkContainer to="/login">
+        <Nav.Link>Login</Nav.Link>
+        </LinkContainer>
         : 
         <>
         {/* if there is no user login do not show lookup page */}
         <Nav.Link onClick={()=> setUser(null)}>Logout</Nav.Link>
-        <Nav.Link href="/lookup">Lookup</Nav.Link> 
-        <Nav.Link href="/settings">Settings</Nav.Link> 
+        <LinkContainer to="/lookup">
+        <Nav.Link>Lookup</Nav.Link> 
+        </LinkContainer>
+
+        <LinkContainer to="/settings">
+        <Nav.Link> Settings </Nav.Link> 
+        </LinkContainer>  
         </>
 
         }

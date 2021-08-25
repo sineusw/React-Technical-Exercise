@@ -17,8 +17,9 @@ function App() {
         <Switch>
 
           {user && <Route path = '/lookup' component= {LookUp} exact/>}
-          {user && <Route path = '/settings' component= {Settings} exact/>}
-
+          {user && <Route path = '/settings' exact>
+            <Settings user={user} setUser={setUser}/>
+            </Route>}
           {!user && <Route path = '*'>
             <Login user={user} setUser={setUser} />
           </Route>}

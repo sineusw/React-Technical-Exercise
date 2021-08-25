@@ -1,12 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {Card, Button} from 'react-router-bootstrap'
 import MyMap from "../components/MyMap"
+import './Lookup.css'
 
 function LookupForm() {
   const [location, setLocation] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [forecast, setForecast] = useState([]); 
 //   const api = {
 //     key: "72b63d4c4e119568962d73e61d8a4714",
 //     base: "http://pro.openweathermap.org/data/2.5/forecast/hourly"
@@ -16,18 +19,6 @@ function LookupForm() {
   const [query, setQuery] = useState('');
   const [weather, setWeather] = useState({});
 
-
-// const search = evt => {
-//   if (evt.key === "Enter") {
-//     fetch(`${api.base}weather?q=${location}&units=metric&APPID=${api.key}`)
-//     .then(res => res.json())
-//     .then(result => {
-//       setWeather(result);
-//       setQuery('');
-//       console.log(result);
-//    });
-//   }
-// }
 
 
 const dateBuilder = (d) => {
@@ -55,12 +46,25 @@ const dateBuilder = (d) => {
 
     //   https://api.openweathermap.org/data/2.5/forecast?q=London,us&appid=${api.key}
 
-      const req2 = axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Dakar&units=metric&appid=72b63d4c4e119568962d73e61d8a4714`); 
-        Promise.all([req1, req2]).then(values => {
-          const [coord, weatherData] = values;
+      const req2 = axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=72b63d4c4e119568962d73e61d8a4714`); 
+      const req3 = axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&appid=72b63d4c4e119568962d73e61d8a4714`)
+        Promise.all([req1, req2, req3]).then(values => {
+          const [coord, weatherData, weatherForecast] = values;
           setWeather(weatherData.data) 
+          let list =  weatherForecast.data.list; 
           
-         setLatitude(coord.data.features[0].center[1]);
+        //   seaching through the list of forcast to find and show the correct days
+          list = list.reduce((prev, current) => {
+              if(prev[prev.length-1].dt_txt.split(' ')[0] === current.dt_txt.split(' ')[0]){
+                return prev
+              } else {
+                return prev.concat(current)
+              }
+
+          }, [list[0]]); 
+          setForecast(list)
+          console.log(list)
+          setLatitude(coord.data.features[0].center[1]);
         setLongitude(coord.data.features[0].center[0]);
         })
       // .then(({ data }) => {
@@ -72,9 +76,9 @@ const dateBuilder = (d) => {
       // })
   }
 // returning everything in a physical form on the front end
-console.log(weather)
+
   return (
-    <>
+  
     {/* <main> */}
     <section className="lookup-form">
     
@@ -112,12 +116,36 @@ console.log(weather)
                 <div className="weather">{weather.weather[0].description}</div>
                 
           </div>
+
           </>
 
     }
-</>
+    {forecast && 
+      <>
+        <h2>Forecast</h2>
+      {forecast.map((forecast) => (
+        <Card style={{ width: '18rem' }}>
+        <Card.Body>
+          <Card.Title>{location}</Card.Title>
+          <Card.Subtitle className="mb-2 text-muted">{weather.main.temp}°C</Card.Subtitle>
+          <Card.Subtitle className="mb-2 text-muted">{forecast.dt_txt.split(' ')[0]}</Card.Subtitle>
+          <Card.Text>
+          {weather.weather[0].description}
+          </Card.Text>
+          <Card.Link href="#">Card Link</Card.Link>
+          <Card.Link href="#">Another Link</Card.Link>
+        </Card.Body>
+      </Card>
+      
+      ))}
+      </>
+    }
+
+
+
+
  
-  );
+
 }
 
 export default LookupForm;
