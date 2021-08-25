@@ -1,20 +1,28 @@
 import React, {useState} from 'react'
 import {Form, Button, Alert} from 'react-bootstrap'
-
-function Login() {
+import {useHistory} from 'react-router-dom'
+import usersData from '../users'
+function Login({user, setUser}) {
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState(''); 
   const [errorMsg, setErrorMsg] = useState(''); 
-
+const history = useHistory()
   const handleLogin = (e)=>{
     e.preventDefault(); 
-    const userEmail = "user@example.com"; 
-    const userpw = "password"; 
-    if(userEmail === email && userpw === password){
-        // login
-    }
+    loginUser(email, password); 
+  }
 
+
+  function loginUser(email, pw){
+    //   if found user, set user
+    const foundUser = usersData.find(user => user.email === email && user.password === pw); 
+    if(foundUser){
+      setUser(foundUser) 
+      history.replace('/lookup')
+    } else {
+        // else say error messege
     setErrorMsg('Invalid Credentials')
+    }
     
   }
 
@@ -38,9 +46,6 @@ function Login() {
   <Form.Group className="mb-3" controlId="formBasicPassword" onChange={(e)=> setPassword(e.target.value)}>
     <Form.Label>Password</Form.Label>
     <Form.Control type="password" placeholder="Password" />
-  </Form.Group>
-  <Form.Group className="mb-3" controlId="formBasicCheckbox">
-    <Form.Check type="checkbox" label="Check me out" />
   </Form.Group>
   <Button variant="primary" type="submit">
     Submit
