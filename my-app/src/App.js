@@ -15,11 +15,13 @@ function App() {
       <Router>
         <Header user={user} setUser={setUser}/>
         <Switch>
-
+{/* short cut for if condition, if the user is logged in then go to lookup page */}
           {user && <Route path = '/lookup' component= {LookUp} exact/>}
           {user && <Route path = '/settings' exact>
+            {/* show settings componets and pass it through the user */}
             <Settings user={user} setUser={setUser}/>
             </Route>}
+            {/* the default path  */}
           {!user && <Route path = '*'>
             <Login user={user} setUser={setUser} />
           </Route>}
